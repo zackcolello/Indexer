@@ -10,7 +10,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-
+#include <errno.h>
+#include <unistd.h>
 
 void writefile(const char* outputFile, struct List *ls){
 
@@ -20,29 +21,39 @@ void writefile(const char* outputFile, struct List *ls){
 	char answer;
 	
 	if(stat(outputFile, &fileStat) == 0){
-		
-		printf("WARNING: The output file you have specified, %s, already exists in this directory.\nAre you sure you want to overwrite this file? Enter (y or n):\n", outputFile);
-		
-		scanf("%c", &answer);
 
-		if(answer == 'y'){
-			printf("Overwriting.\n");	
-			//continue and overwrite file
-		
-		}else if(answer == 'n'){
-		
-			printf("The file has not been overwritten, exiting program.\n");
-			return;		
+		if( fileStat.st_mode & S_IFDIR )
+	    	{
+	       	//directory
+		printf("You cannot write to a dirctory. Exiting Indexer.\n");
+		return;
 
-		}else{
+		}else if( fileStat.st_mode & S_IFREG)  {
+                    //it's a file
+	
+			printf("WARNING: The output file you have specified, %s, already exists in this directory.\nAre you sure you want to overwrite this file? Enter (y or n):\n", outputFile);
 		
-			printf("Not valid input, expecting character 'y' or 'n'. Exiting program.\n");
-			return;
+			scanf("%c", &answer);
+	
+
+			if(answer == 'y'){
+				printf("Overwriting.\n");	
+				//continue and overwrite file
+		
+			}else if(answer == 'n'){
+		
+				printf("The file has not been overwritten, exiting program.\n");
+				return;		
+
+			}else{
+		
+				printf("Not valid input, expecting character 'y' or 'n'. Exiting program.\n");
+				return;
+			}
+
 		}
 
 	}
-
-
 
 	fp = fopen(outputFile,"w");
 
@@ -85,6 +96,20 @@ int readFile(struct List *list, const char* filename){
 	int i = 0;
 	char c;
 	char* buffer;
+	
+	int rval;
+	rval =access(filename,R_OK);
+
+	if (rval==0){
+	//you have read permission
+
+	}
+	else if(errno==EACCES){
+	printf("you do not have access to %s\n",filename);
+	return 0;
+
+	}
+
 
 	//read in file, put in big string 
 	FILE *filePtr = fopen(filename, "r");
@@ -184,6 +209,32 @@ int main(int argc, char **argv){
 	if(argc != 3){
 		printf("Error: invalid number of arguments\n");
 		return -1;
+	}
+	
+	if(strcmp(argv[1],argv[2])==0){
+		printf("input arguments are the same file. Cannot overwrite. Exiting Indexer.\n");
+
+		return 0;
+	}
+
+	int rval;
+	char* output=argv[1];
+	rval = access(output,F_OK);
+	if(rval==0){
+	//file exists
+	}
+	else if(errno==EACCES){
+		printf("%s is not accessible\n", output);
+		return 0;
+	}
+
+	rval = access(output, W_OK);
+	if(rval==0){
+		//permission to write
+	}else if (errno==EACCES){
+		printf("you do not have permission to write to %s\n",output);
+		return 0;
+
 	}
 
 	struct List *list = SLCreate(); //create list to store words
