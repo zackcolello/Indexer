@@ -8,7 +8,7 @@
 #include <string.h>
 #include "tokenizer.h"
 
-char *indexPointer; //to be used to track where tokens are in the second argument
+char *indexPointer; //to be used to track where tokens are in the second argument.
 
 /*
  *  * TKCreate creates a new TokenizerT object for a given set of separator

@@ -1,4 +1,4 @@
-//sorted-list.c//
+//sorted-list.c.//
 #include "sorted-list.h"
 #include "tokenizer.h"
 
