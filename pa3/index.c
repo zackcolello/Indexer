@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "index.h"
 #include "tokenizer.h"
 #include "sorted-list.h"
 #include <sys/types.h>
