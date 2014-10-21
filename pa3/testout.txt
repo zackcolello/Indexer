@@ -1,3 +1,0 @@
-<list> test
-testfile.txt, 1
-</list>
