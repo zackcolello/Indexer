@@ -1,4 +1,3 @@
-//Index.c//
 //This .c file contains the main for our code and the functions to read, write, and traverse files.
 
 #include <stdio.h>
@@ -11,7 +10,6 @@
 #include <dirent.h>
 #include <errno.h>
 #include <unistd.h>
-
 void writefile(const char* outputFile, struct List *ls){
 
 	FILE *fp;
